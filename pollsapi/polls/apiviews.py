@@ -1,4 +1,5 @@
 from rest_framework import generics, status
+from rest_framework import viewsets
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
@@ -6,12 +7,7 @@ from .models import Poll, Choice
 from .serializers import PollSerializer, ChoiceSerializer, VoteSerializer
 
 
-class PollList(generics.ListCreateAPIView):
-    queryset = Poll.objects.all()
-    serializer_class = PollSerializer
-
-
-class PollDetail(generics.RetrieveDestroyAPIView):
+class PollViewSet(viewsets.ModelViewSet):
     queryset = Poll.objects.all()
     serializer_class = PollSerializer
 
@@ -27,6 +23,7 @@ class ChoiceList(generics.ListCreateAPIView):
 class CreateVote(APIView):
 
     def post(self, request, pk, choice_pk):
+        voted_by = request.data.get("voted_by")
         data = {'choice': choice_pk, 'poll': pk, 'voted_by': voted_by}
         serializer = VoteSerializer(data=data)
 
